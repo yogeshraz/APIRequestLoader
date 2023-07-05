@@ -15,6 +15,27 @@ enum DataError: Error {
     case invalidData
     case network(Error?)
     case decoding(Error?)
+    case noInternet
+}
+
+extension DataError: CustomStringConvertible {
+    public var description: String {
+        switch self {
+            
+        case .invalidResponse:
+            return "invalidResponse"
+        case .invalidURL:
+            return "invalidURL"
+        case .invalidData:
+            return "invalidData"
+        case .network(let error):
+            return error!.localizedDescription
+        case .decoding(let error):
+            return error!.localizedDescription
+        case .noInternet:
+            return "noInternet"
+        }
+    }
 }
 
 typealias ResultHandler<T> = (Result<T, DataError>) -> Void
@@ -36,6 +57,11 @@ final class ApiRequestLoader {
         type: EndPointType,
         completion: @escaping ResultHandler<T>
     ) {
+        
+        if !Reachability.isConnectedToNetwork() {
+            completion(.failure(.noInternet))
+            return
+        }
         guard let url = type.url else {
             completion(.failure(.invalidURL))
             return
@@ -93,7 +119,6 @@ class NetworkHandler {
         sessionConfig.timeoutIntervalForResource = 30.0
         let session = URLSession(configuration: sessionConfig, delegate: self as? URLSessionDelegate, delegateQueue: OperationQueue.main)
         let task = session.dataTask(with: url) { data, response, error in
-            //let str = String(data: data!, encoding: .utf8)
             guard let response = response as? HTTPURLResponse,
                   200 ... 299 ~= response.statusCode else {
                 completionHandler(.failure(.invalidResponse))
@@ -118,8 +143,8 @@ class ResponseHandler {
         completionHandler: ResultHandler<T>
     ) {
         do {
-            let userResponse = try JSONDecoder().decode(modelType, from: data)
-            completionHandler(.success(userResponse))
+            let response = try JSONDecoder().decode(modelType, from: data)
+            completionHandler(.success(response))
         }catch {
             completionHandler(.failure(.decoding(error)))
         }

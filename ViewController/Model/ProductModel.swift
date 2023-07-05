@@ -9,7 +9,7 @@ import UIKit
 
 // MARK: - EventDataModel
 struct EventDataModel: Codable {
-    let events: [Event]?
+    let events: [String]?
 }
 
 // MARK: - Event
@@ -151,4 +151,10 @@ struct Location: Codable {
         case urlSlug = "url_slug"
         case id
     }
+}
+
+
+struct AddProduct: Codable {
+    var id: Int? = nil
+    let title: String
 }

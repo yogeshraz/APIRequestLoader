@@ -9,7 +9,7 @@ import Foundation
 
 enum ApiEndPoint {
     case event(Id: String) // Module - GET
-    //case addProduct(product: AddProduct) // POST
+    case addProduct(product: AddProduct) // POST
 }
 
 // https://fakestoreapi.com/products
@@ -19,12 +19,14 @@ extension ApiEndPoint: EndPointType {
         switch self {
         case .event(let Id):
             return "venue_id=\(Id)"
+        case .addProduct(product: _):
+            return "add"
         }
     }
 
     var baseURL: String {
         switch self {
-        case .event:
+        case .event,.addProduct(product: _):
             return "https://api.resy.com/3/events/upcoming?"
         }
     }
@@ -37,6 +39,8 @@ extension ApiEndPoint: EndPointType {
         switch self {
         case .event:
             return .get
+        case .addProduct(product: _):
+            return .post
         }
     }
 
@@ -44,6 +48,8 @@ extension ApiEndPoint: EndPointType {
         switch self {
         case .event:
             return nil
+        case .addProduct(product: let product):
+            return product
         }
     }
 
