@@ -10,11 +10,11 @@ import UIKit
 final class ProductViewModel {
 
     
-    func fetchProducts() {
+    func fetchProducts(success: @escaping (EventDataModel) -> ()) {
         ApiRequestLoader.shared.request(modelType: EventDataModel.self, type: ApiEndPoint.event(Id: "66533")) { response in
             switch response {
             case .success(let event):
-                print(event.events?.count as Any)
+                success(event)
             case .failure(let error):
                 UIAlertController.showAlert(title: "Alert", msg: error.description)
             }

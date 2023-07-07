@@ -9,7 +9,7 @@ import UIKit
 
 // MARK: - EventDataModel
 struct EventDataModel: Codable {
-    let events: [String]?
+    let events: [Event]?
 }
 
 // MARK: - Event

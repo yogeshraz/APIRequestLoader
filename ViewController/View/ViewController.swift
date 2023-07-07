@@ -9,6 +9,7 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var lable: UILabel!
     // MARK: - Variables
     private var viewModel = ProductViewModel()
     
@@ -16,7 +17,9 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        viewModel.fetchProducts()
+        viewModel.fetchProducts { [self] data in
+            lable.text = data.events?.first?.name
+        }
     }
 
 
